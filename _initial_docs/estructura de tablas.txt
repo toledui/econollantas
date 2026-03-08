@@ -1,0 +1,742 @@
+A continuación te dejo tablas + campos sugeridos + relaciones (estilo Laravel). Puedes implementarlo con migraciones tal cual y ajustar nombres.
+
+1) Usuarios, roles, permisos (RBAC) y estructura organizacional
+users
+
+id
+
+name
+
+email (unique)
+
+password
+
+status (active/inactive/suspended)
+
+primary_branch_id (FK a branches, nullable si un admin global)
+
+department_id (FK a departments, nullable)
+
+position (nullable) (ej: “Gerente Zona”, “Vendedor”, etc)
+
+created_by (FK a users, nullable) (quién lo dio de alta)
+
+timestamps
+
+Relaciones:
+
+user pertenece a 1 departamento (opcional)
+
+user pertenece a 1 sucursal principal (opcional)
+
+user puede tener múltiples sucursales si es jefe de zona (tabla pivote abajo)
+
+roles
+
+id
+
+name (unique) (ej: super_admin, admin, user, manager)
+
+description (nullable)
+
+timestamps
+
+permissions
+
+id
+
+name (unique) (ej: admins.create, admins.delete, courses.assign, scorecard.edit)
+
+group (nullable) (ej: “Cursos”, “Usuarios”)
+
+timestamps
+
+pivotes RBAC
+role_user
+
+role_id
+
+user_id
+
+permission_role
+
+permission_id
+
+role_id
+
+(Opcional, si quieres permisos directos por usuario)
+
+permission_user
+
+permission_id
+
+user_id
+
+Regla de negocio “solo super admin elimina admins”:
+
+Define permiso admins.delete.
+
+Asígnalo solo al rol super_admin.
+
+En el UI/Policies, bloqueas acciones sin ese permiso.
+
+departments (categorías de usuarios/admins)
+
+id
+
+name (unique) (Ventas, Marketing, Mostrador, Técnicos…)
+
+description (nullable)
+
+active (bool)
+
+timestamps
+
+2) Multisucursal + jefes de zona
+branches (sucursales)
+
+id
+
+name (ej: “Sucursal Centro”)
+
+code (nullable)
+
+phone (nullable)
+
+email (nullable)
+
+Dirección
+
+country, state, city, zip
+
+address_line1, address_line2 (nullable)
+
+lat, lng (nullable)
+
+Datos fiscales (opcionales)
+
+legal_name (razón social, nullable)
+
+tax_id (RFC/NIT, nullable)
+
+tax_regime (nullable)
+
+fiscal_address_* (o reutilizar campos)
+
+invoice_email (nullable)
+
+active (bool)
+
+timestamps
+
+branch_user (usuarios a cargo de múltiples sucursales / jefes de zona)
+
+branch_id
+
+user_id
+
+relation_type (enum: assigned, in_charge)
+
+is_primary (bool) (opcional si quieres marcar principal aquí en lugar de users.primary_branch_id)
+
+Relaciones clave:
+
+Un user puede estar asignado a varias sucursales (jefe de zona)
+
+Para usuario normal, basta con users.primary_branch_id y/o un registro en pivote.
+
+3) Cursos, contenido, lecciones y progreso (con bloqueo de exámenes)
+course_categories (tema del curso: ventas, marketing, instalación…)
+
+id
+
+name (unique)
+
+description (nullable)
+
+active (bool)
+
+timestamps
+
+courses
+
+id
+
+course_category_id (FK)
+
+title
+
+slug (unique)
+
+description (text)
+
+cover_image_path (nullable)
+
+status (draft/published/archived)
+
+created_by (FK a users)
+
+timestamps
+
+lessons
+
+id
+
+course_id (FK)
+
+title
+
+description (text, nullable)
+
+order (int)
+
+content_type (enum: youtube, pdf, image, ppt, file, html, external_link)
+
+duration_seconds (int, nullable) (para video, si la quieres guardar)
+
+is_required (bool, default true)
+
+created_by (FK users)
+
+timestamps
+
+lesson_contents (para permitir múltiples recursos por lección)
+
+id
+
+lesson_id (FK)
+
+type (enum: youtube, file, link)
+
+title (nullable)
+
+url (nullable) (youtube o link externo)
+
+file_path (nullable) (pdf, ppt, imagen, etc)
+
+mime_type (nullable)
+
+size_bytes (nullable)
+
+meta_json (JSON nullable) (ej: id de youtube, página inicial pdf, etc)
+
+order (int)
+
+timestamps
+
+Si prefieres simple: puedes guardar un solo contenido en lessons (url/file).
+Pero tu requerimiento dice “puede tener diferentes tipos de contenido”, así que este enfoque te evita limitaciones.
+
+4) Asignación de cursos (por departamento o por usuario) + ajustes manuales
+course_assignments (cabecera de asignación)
+
+id
+
+course_id (FK)
+
+assigned_by (FK users)
+
+assignment_type (enum: department, user, branch) (recomendado incluir branch)
+
+department_id (nullable)
+
+user_id (nullable)
+
+branch_id (nullable)
+
+assigned_at
+
+due_at (nullable)
+
+notes (nullable)
+
+timestamps
+
+course_user (lista final efectiva por usuario)
+
+Esta tabla es CLAVE para tu vista “usuarios asignados a este curso” y para “agregar/quitar manualmente”.
+
+course_id
+
+user_id
+
+assigned_source (enum: manual, department, branch)
+
+source_id (nullable) (id del depto o sucursal si aplica)
+
+assigned_by (FK users, nullable)
+
+assigned_at
+
+due_at (nullable)
+
+status (enum: not_started, in_progress, completed) (puedes calcularlo pero tenerlo aquí acelera dashboard)
+
+timestamps
+
+Regla práctica:
+
+Cuando asignas por departamento/sucursal, haces un job que “materializa” filas en course_user para todos los usuarios del grupo.
+
+Cuando quitas un usuario desde detalle del curso, eliminas (o marcas revoked_at) esa fila aunque haya venido por lote.
+
+(Opcional para auditoría)
+
+revoked_at (nullable)
+
+revoked_by (nullable FK users)
+
+revoke_reason (nullable)
+
+5) Progreso por lección (90% video) + % completado del curso
+lesson_progress
+
+id
+
+course_id (FK) (redundante pero útil)
+
+lesson_id (FK)
+
+user_id (FK)
+
+started_at (nullable)
+
+completed_at (nullable)
+
+completion_method (enum: video_90, manual, document_open, admin_override)
+
+timestamps
+
+lesson_video_progress (telemetría de video: cuánto vio)
+
+id
+
+lesson_id
+
+user_id
+
+provider (enum: youtube)
+
+watched_seconds (int default 0)
+
+last_position_seconds (int default 0)
+
+duration_seconds (int nullable)
+
+percent_watched (decimal(5,2) nullable)
+
+last_event_at (datetime)
+
+timestamps
+
+Lógica:
+
+Si percent_watched >= 90 ⇒ habilitas botón “Completar lección”.
+
+Al completar, insert/update en lesson_progress.completed_at.
+
+course_progress (cache/summary por usuario)
+
+id
+
+course_id
+
+user_id
+
+percent_completed (decimal(5,2))
+
+lessons_completed (int)
+
+lessons_total (int)
+
+status (not_started / in_progress / completed)
+
+completed_at (nullable)
+
+last_activity_at (nullable)
+
+timestamps
+
+Puedes recalcular on-demand, pero para dashboard con filtros por sucursal/depto conviene guardar este resumen.
+
+6) Quizzes / Exámenes (bloqueados hasta 100% lecciones)
+
+Puedes manejar “quizzes” y “exámenes” en el mismo sistema y distinguir por tipo.
+
+assessments
+
+id
+
+course_id
+
+title
+
+type (enum: quiz, exam)
+
+min_score (decimal(5,2) default 70)
+
+attempts_allowed (int nullable) (null = ilimitado)
+
+is_required (bool default true)
+
+unlock_rule (enum: course_100_lessons) (por ahora tu regla fija)
+
+order (int)
+
+timestamps
+
+assessment_questions
+
+id
+
+assessment_id
+
+type (enum: single_choice, multi_choice, true_false, open)
+
+question_text (text)
+
+points (decimal(6,2))
+
+order (int)
+
+meta_json (json nullable)
+
+timestamps
+
+assessment_options (para preguntas de opción)
+
+id
+
+question_id
+
+option_text
+
+is_correct (bool)
+
+order
+
+timestamps
+
+assessment_attempts
+
+id
+
+assessment_id
+
+course_id
+
+user_id
+
+status (in_progress/submitted/graded)
+
+started_at
+
+submitted_at (nullable)
+
+score (decimal(6,2) nullable)
+
+passed (bool nullable)
+
+graded_by (nullable FK users) (si hay preguntas abiertas)
+
+timestamps
+
+assessment_answers
+
+id
+
+attempt_id
+
+question_id
+
+selected_option_id (nullable)
+
+answer_text (nullable)
+
+is_correct (nullable)
+
+points_awarded (decimal(6,2) nullable)
+
+timestamps
+
+Regla de desbloqueo:
+
+Antes de permitir iniciar exam, validas:
+
+course_progress.percent_completed == 100
+
+o lessons_completed == lessons_total
+
+7) Eventos y analítica (vistas, completados, etc.)
+
+Para estadísticas “cuánto se ha visto”, “en curso/sin iniciar”, etc.
+
+activity_events (event sourcing ligero)
+
+id
+
+user_id
+
+event_type (enum:
+course_assigned, course_started, course_completed,
+lesson_started, lesson_completed,
+video_progress,
+assessment_started, assessment_submitted, assessment_graded
+)
+
+course_id (nullable)
+
+lesson_id (nullable)
+
+assessment_id (nullable)
+
+attempt_id (nullable)
+
+branch_id (nullable) (snapshot del usuario al momento, útil)
+
+department_id (nullable) (snapshot)
+
+meta_json (json)
+
+created_at
+
+Esto te permite dashboard con agregaciones, y auditoría.
+
+8) Biblioteca (recursos)
+library_categories (tema: ventas, marketing, etc)
+
+id
+
+name unique
+
+description nullable
+
+active bool
+
+timestamps
+
+resource_types (tipo de recurso: libro, video, plantilla, pdf…)
+
+id
+
+name unique
+
+timestamps
+
+library_resources
+
+id
+
+library_category_id (FK)
+
+resource_type_id (FK)
+
+title
+
+description (text nullable)
+
+content_type (enum: file, youtube, link)
+
+url (nullable)
+
+file_path (nullable)
+
+mime_type (nullable)
+
+published_at (nullable)
+
+created_by (FK users)
+
+active (bool)
+
+timestamps
+
+(Opcional: control de visibilidad por rol/depto/sucursal)
+
+resource_visibility (polimórfica o pivotes: resource_role, resource_department, resource_branch)
+
+9) Avisos (banners / comunicados)
+announcements
+
+id
+
+title
+
+body (text)
+
+type (enum: info, warning, promo) (opcional)
+
+image_path (nullable)
+
+starts_at
+
+ends_at (nullable)
+
+created_by (FK users)
+
+active (bool)
+
+timestamps
+
+(Opcional: segmentación)
+
+announcement_targets
+
+announcement_id
+
+target_type (enum: all, branch, department, role, user)
+
+target_id (nullable)
+
+10) Scorecard (ventas diarias / métricas)
+
+Como “desconoces campos exactos”, lo más seguro es hacerlo configurable:
+un scorecard tiene plantillas (definen qué campos se capturan) y capturas (valores por fecha/sucursal/usuario).
+
+scorecard_templates
+
+id
+
+name (ej: “SLRC Scorecard Diario”)
+
+description (nullable)
+
+active (bool)
+
+created_by (FK users)
+
+timestamps
+
+scorecard_fields
+
+id
+
+template_id (FK)
+
+key (ej: ventas_monto, ventas_pzas, ticket_promedio)
+
+label (ej: “Venta diaria $”)
+
+type (enum: int, decimal, text, bool)
+
+required (bool)
+
+order (int)
+
+meta_json (json nullable) (min, max, fórmula, etc)
+
+timestamps
+
+scorecard_entries (cabecera)
+
+id
+
+template_id
+
+branch_id
+
+user_id (quién lo capturó)
+
+entry_date (date) (día que reporta)
+
+status (draft/submitted/approved) (si lo necesitas)
+
+approved_by (nullable FK users)
+
+timestamps
+
+scorecard_values
+
+id
+
+entry_id (FK)
+
+field_id (FK)
+
+value_int (nullable)
+
+value_decimal (nullable)
+
+value_text (nullable)
+
+value_bool (nullable)
+
+timestamps
+
+Ventajas:
+
+Puedes replicar el Excel sin rehacer DB cada vez.
+
+Luego generas reportes tipo “comparativo venta”, “avance al día”, etc.
+
+11) Relaciones resumidas (mapa mental rápido)
+
+users ↔ roles (N:N)
+
+roles ↔ permissions (N:N)
+
+users → departments (N:1)
+
+users → branches (N:1 principal) y branch_user (N:N multi)
+
+courses → course_categories (N:1)
+
+courses → lessons (1:N) → lesson_contents (1:N)
+
+courses ↔ users (N:N) vía course_user (asignación efectiva)
+
+lesson_progress (user+lesson) + lesson_video_progress (user+lesson)
+
+course_progress (user+course resumen)
+
+assessments → assessment_questions → assessment_options
+
+assessment_attempts → assessment_answers
+
+activity_events (log analítico)
+
+library_resources → library_categories y resource_types
+
+announcements (+ targets opcional)
+
+scorecard_templates → scorecard_fields
+
+scorecard_entries → scorecard_values
+
+12) Índices y constraints recomendados (importante para dashboard)
+
+course_user: índice (course_id, user_id) unique
+
+lesson_progress: índice unique (lesson_id, user_id)
+
+lesson_video_progress: índice unique (lesson_id, user_id)
+
+course_progress: índice unique (course_id, user_id)
+
+assessment_attempts: índice (assessment_id, user_id, started_at)
+
+activity_events: índices por (event_type, created_at), (branch_id, created_at), (course_id, created_at)
+
+scorecard_entries: unique (template_id, branch_id, entry_date) si solo debe existir uno por sucursal/día
+
+users: índices (department_id), (primary_branch_id)
+
+13) Siguiente paso (para que el diseño quede redondo)
+
+Para definir el módulo de scorecard como el Excel:
+
+¿Cada sucursal captura un scorecard diario o puede haber varios por día?
+
+¿Qué KPIs mínimos quieres asegurar? (pzas, monto, transacciones, meta, faltantes, etc.)
+
+¿Hay aprobación por gerente?
+
+Si no quieres entrar aún a detalle, el modelo configurable de arriba te cubre el 90% y no te amarra.
+
+Si quieres, en el siguiente mensaje te lo aterrizo a:
+
+diagrama ER (texto),
+
+migraciones Laravel (estructura exacta),
+
+y policies/gates recomendados para “super admin vs admin vs user”, asignación de cursos, y filtros por sucursal/departamento en dashboard.

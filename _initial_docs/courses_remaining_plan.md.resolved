@@ -1,0 +1,61 @@
+# Plan de Implementación: Módulo de Cursos (Fases Restantes)
+
+El **Módulo de Cursos** ya cuenta con una base de datos sólida (Fase 1 y 2) y la estructura principal del panel de administración "Course Builder" (Fase 3), permitiendo crear cursos, gestionar temas (lecciones) y evaluaciones a nivel cabecera.
+
+A continuación, se detalla el plan preciso para completar el sistema de capacitación al 100%.
+
+---
+
+## 🏗️ Fase 4: Contenidos de Lecciones y Constructor de Exámenes (Admin)
+*El objetivo de esta fase es permitir a los administradores llenar de contenido las lecciones que ya crearon y añadir las preguntas reales a las evaluaciones.*
+
+**Paso 4.1: Componente de Contenido de Lecciones (Player Interno)**
+- [ ] Crear el modal/vista para agregar "Recursos" a una lección específica.
+- [ ] Implementar la carga de archivos (PDF, presentaciones) y vinculación de URLs (YouTube, enlaces externos) a la tabla `lesson_contents`.
+- [ ] Añadir UI para ordenar arrastrando (drag & drop) los contenidos dentro de una lección.
+
+**Paso 4.2: Constructor de Preguntas (Exam Builder)**
+- [ ] Dentro de la pestaña Evaluaciones, construir la interfaz para añadir "Preguntas" (tabla `assessment_questions`) a un examen.
+- [ ] Crear un "Repeater Dinámico" para que el administrador agregue las opciones múltiples (tabla `assessment_options`) a cada pregunta e indique cuál es la correcta.
+
+---
+
+## 🎯 Fase 5: Lógica de Asignación y Control de Accesos (Admin)
+*Aquí definiremos "quién" debe ver "qué" curso.*
+
+**Paso 5.1: Panel de Asignaciones (Course Builder Tab)**
+- [x] Completar la pestaña "Asignaciones" en el CourseBuilder.
+- [x] Permitir buscar y seleccionar: **Usuarios Individuales**, **Departamentos Enteros** o **Sucursales Específicas**.
+- [x] Guardar estas relaciones en la tabla pivot `course_user` y registrar el origen en `course_assignments`.
+
+**Paso 5.2: Dispatch de Notificaciones (Opcional pero recomendado)**
+- [x] Crear un Notifier/Mail Mailable para alertar al usuario (vía sistema de notificaciones interno o email) que un nuevo curso le ha sido asignado.
+
+---
+
+## 🎓 Fase 6: Portal del Empleado y Reproductor Inmersivo (Frontend Usuario)
+*La vista final y la experiencia interactiva de aprendizaje para el equipo de EconoLlantas.*
+
+**Paso 6.1: Lista de Mis Cursos (Dashboard/Portal)**
+- [x] Crear un componente Livewire `UserCoursesIndex` (ej. `/app/mis-cursos`).
+- [x] Mostrar en pestañas: *Cursos Asignados (Pendientes)*, *En Progreso (con % de avance)* y *Completados*.
+- [x] Aplicar diseño de tarjetas atractivas informando cuántas lecciones tiene y el progreso actual.
+
+**Paso 6.2: El Reproductor del Curso (Course Player)**
+- [x] Construir un layout inmersivo (similar a Udemy o Platzi) donde:
+  - Lado izquierdo o superior: Visor del contenido actual (YouTube player embebido inteligente o visor de PDF).
+  - Lado derecho o lateral: Lista de lecciones (Temario) con "checkmarks" de estado.
+- [x] **Restricción Secuencial:** Lógica estricta en base de datos. Si la lección 2 está bloqueada, el usuario no puede darle clic hasta sumar progreso en la lección 1 (`lesson_progress`).
+- [x] **Motor de Autoguardado de Progreso:** Lógica base para marcar lecciones como completadas.
+
+**Paso 6.3: Motor de Toma de Exámenes (Engine)**
+- [x] Crear la vista `TakeAssessment` para que, al concluir todas las lecciones, se despliegue el examen o quiz.
+- [x] Lógica para guardar las respuestas en `assessment_answers` en tiempo real (State Management).
+- [x] Autocalificación inmediata (`assessment_attempts`) y cálculo de score sobre 100%.
+- [x] Si aprueba (supera el `passing_score`), marcar el curso como 100% completado en `course_progress`.
+
+---
+
+## 🏆 Fase 7: Certificaciones y Analytics (Fase Final de Cierre)
+- [ ] **Generación de Diploma PDF:** Tras aprobar, permitir descargar un diploma con el logo de EconoLlantas usando `dompdf` o similar.
+- [ ] **Dashboard de Administrador (Scorecard):** Añadir pequeñas tarjetas en la vista principal del sistema para que Recursos Humanos / Gerencia vea: *Cursos más completados, Empleados rezagados, Promedio de calificaciones*.

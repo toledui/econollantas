@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0056b2",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0f1923",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>.sidebar-active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid white
+    }
+.bg-watermark {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBCqi5Ixi-a4vvEqN15spQaBgmnrYZpF_hNsbBwfDFKdEsir9KjZ0_J-Obad3bNwlOq2T8odIbWnXrK6DhSlGOWq7DBpaoRmSRj2jNcqpN-tkcwWzsCpjIPgG_IFKxm6wymMt5INVtaEC1sRDH4ayBsp8up5xON9ELfa91tH4lFry11DXcB6IiIeEE9eRsgAIM4ePVKuzRmFJakmiyJ21M2KE_kJcytGTCKSdqN9OXJ5QLbqvOrTmkNZTwNeG5l1qqaYTyau0_ie84);
+    background-repeat: repeat;
+    background-size: 200px;
+    opacity: 0.03;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none
+    }</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="bg-watermark"></div>
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 bg-primary text-white flex flex-col flex-shrink-0 z-20">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-3xl">tire_repair</span>
+<h1 class="text-xl font-black tracking-tight">EconoLlantas</h1>
+</div>
+</div>
+<nav class="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+<a class="sidebar-active flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-r-lg transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">school</span>
+                    Cursos
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">library_books</span>
+                    Biblioteca
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+                    Scorecard
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+                    Avisos
+                </a>
+<div class="pt-4 pb-2 px-4 text-[10px] uppercase tracking-widest text-white/50 font-bold">Administración</div>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+                    Usuarios
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">location_on</span>
+                    Sucursales
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+                    Reportes
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-sm font-medium hover:bg-white/10 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                    Configuración
+                </a>
+</nav>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col overflow-hidden">
+<!-- Top Bar -->
+<header class="h-16 bg-primary text-white flex items-center justify-between px-8 shadow-md z-10">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/70">search</span>
+<input class="w-full bg-white/10 border-none rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder:text-white/60 focus:ring-2 focus:ring-white/30 focus:bg-white/20 transition-all outline-none" placeholder="Buscar cursos, manuales o usuarios..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-1 hover:bg-white/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-white/20"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-bold leading-none">Juan Pérez</p>
+<p class="text-xs text-white/70 mt-1">Sucursal Norte</p>
+</div>
+<div class="size-10 rounded-full bg-white/20 border-2 border-white/30 overflow-hidden">
+<img alt="Avatar de usuario" class="w-full h-full object-cover" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB5o4PYRfL9344YjjQAV17GWVOvFYNNqXF_t_xoYveTloGfq43W_w7BTrcA0uVId5sFOfKfUKfLIF4dLkUXBGGtpSQWX_GUkHyBoKqYf5I5Q_y6dEquiTWGHP4QzBscIhNE9WZS-WmfQQyXkRknX6tPATUowxYk37GGBF7BWURdQpkIBjLtoxEbZr0PHVs7mY6mGT9gTGyeO_k5rPiNYlGdoACD4EPRV8LYu-GuRibaW5l6Q0QPN3rkXxs7IQxo5AcpvsMN47oKD8"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<main class="flex-1 overflow-y-auto p-8 space-y-8">
+<!-- Hero Banner -->
+<section class="relative bg-primary rounded-xl overflow-hidden flex flex-col md:flex-row items-center p-8 md:p-12 shadow-lg border border-primary/20">
+<div class="flex-1 z-10 text-white space-y-4">
+<h1 class="text-4xl md:text-5xl font-black leading-tight tracking-tight">¡Aprender nunca fue tan fácil!</h1>
+<p class="text-lg text-white/90 max-w-lg">Bienvenido de nuevo a tu portal de capacitación corporativa. Explora los nuevos módulos y mantén tus habilidades actualizadas.</p>
+<div class="pt-4 flex gap-4">
+<button class="bg-white text-primary px-8 py-3 rounded-lg font-bold hover:bg-slate-100 transition-colors shadow-sm">Ver mis cursos</button>
+<button class="bg-primary/50 backdrop-blur-sm border border-white/30 text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/70 transition-colors">Soporte Técnico</button>
+</div>
+</div>
+<div class="relative w-full md:w-1/3 mt-8 md:mt-0 flex justify-center items-center">
+<div class="w-64 h-64 bg-white/10 rounded-full absolute animate-pulse"></div>
+<img alt="Mascota perro verde" class="relative z-10 h-64 w-auto drop-shadow-2xl" data-alt="Green dog mascot cartoon illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCthMvDZliV3CNKbtgOQ3LzkjrPSzm-fh2ejV_jnb9E6HZONnPXl6DrPVFtYTBaLF3CHM-DIbX7vLJdoC19Fa7Nl7qkgh_5XEsI2IgF9rgZ-zZkLpbP0nFBLfXaES8jCPk9SzDJCJi9oD-CmaFS9LlQTw7rTrY2GFJAnzRJzCjYJq3qGBasX7RRsyAz0yTlXANenpXzt1GRv26ePOMiUwpsJP2Mawo3gRaXcfFmfNs3pJAq2TOllxWoj13vYox3pwH-T7XA5MDvo3M"/>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Progreso Personal -->
+<section class="lg:col-span-1 bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h2 class="text-lg font-bold">Progreso Personal</h2>
+</div>
+<div class="space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-background-light dark:bg-slate-700 p-4 rounded-lg border border-slate-100 dark:border-slate-600">
+<p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Cursos Asignados</p>
+<p class="text-2xl font-black text-primary">05</p>
+</div>
+<div class="bg-background-light dark:bg-slate-700 p-4 rounded-lg border border-slate-100 dark:border-slate-600">
+<p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Completados</p>
+<p class="text-2xl font-black text-green-600">02</p>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-end">
+<p class="text-sm font-bold">Progreso Global</p>
+<p class="text-lg font-black text-primary">40%</p>
+</div>
+<div class="w-full h-4 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 40%"></div>
+</div>
+</div>
+<button class="w-full border-2 border-primary text-primary py-2 rounded-lg font-bold hover:bg-primary/5 transition-colors">Detalle del Scorecard</button>
+</div>
+</section>
+<!-- Módulos de capacitación -->
+<section class="lg:col-span-2 space-y-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary">school</span>
+<h2 class="text-lg font-bold">Módulos de capacitación</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+<!-- Modulo 1 -->
+<div class="bg-primary text-white p-5 rounded-xl flex flex-col gap-4 group cursor-pointer hover:bg-primary/90 transition-all border border-primary">
+<div class="size-12 bg-white/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">info</span>
+</div>
+<div>
+<h3 class="font-bold text-lg leading-tight">Módulo 1 - Introducción</h3>
+<p class="text-white/80 text-sm mt-1">Fundamentos de la empresa y visión corporativa.</p>
+</div>
+<div class="mt-auto pt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+<span>Continuar</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- Modulo 2 -->
+<div class="bg-primary text-white p-5 rounded-xl flex flex-col gap-4 group cursor-pointer hover:bg-primary/90 transition-all border border-primary">
+<div class="size-12 bg-white/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">inventory_2</span>
+</div>
+<div>
+<h3 class="font-bold text-lg leading-tight">Módulo 2 - Producto</h3>
+<p class="text-white/80 text-sm mt-1">Catálogo completo de llantas y servicios técnicos.</p>
+</div>
+<div class="mt-auto pt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+<span>Comenzar</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</div>
+</div>
+<!-- Modulo 3 -->
+<div class="bg-primary text-white p-5 rounded-xl flex flex-col gap-4 group cursor-pointer hover:bg-primary/90 transition-all border border-primary">
+<div class="size-12 bg-white/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">support_agent</span>
+</div>
+<div>
+<h3 class="font-bold text-lg leading-tight">Módulo 3 - Atención</h3>
+<p class="text-white/80 text-sm mt-1">Excelencia en el servicio y gestión de clientes.</p>
+</div>
+<div class="mt-auto pt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+<span>Bloqueado</span>
+<span class="material-symbols-outlined text-sm">lock</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Avisos -->
+<section class="space-y-4">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">campaign</span>
+<h2 class="text-lg font-bold">Avisos Corporativos</h2>
+</div>
+<button class="text-primary text-sm font-bold hover:underline">Ver todos</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Aviso 1 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+<div class="h-40 bg-slate-200 dark:bg-slate-700 relative">
+<img alt="Noticia 1" class="w-full h-full object-cover" data-alt="Corporate office team meeting photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADEL_uc84Vz50L2a980LK4PFOrJZVDBQoksS1ryEFJOyLzgIbjI1eBIyeaQdWLsHP02lDZWz2wUsMaq_NuFCDBHnKF46w-VG9LXzZw6VRpBiDMDzlVwg7tfEAztbBVhQ-W3eDkPm-ImkL7y0Bn1L-_nalE0AlOxog-6ykQ5pdb1tSTCeCRgWw3LzT36cDaHxM-wMd3cC_tjjPo2_3lZnFoWyeDK5-DK59sL3rD08SW0qkjMuFCtBlB-Lg1VI0nXswQpRFYabv00kM"/>
+<span class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded">NOTICIA</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<p class="text-xs text-slate-500 font-bold mb-2">15 Oct 2023</p>
+<h3 class="font-bold text-slate-900 dark:text-white mb-2 leading-snug">Nueva Alianza Estratégica con Proveedores Europeos</h3>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">Estamos orgullosos de anunciar la firma de un nuevo acuerdo que mejorará nuestro stock...</p>
+<button class="mt-4 text-primary font-bold text-sm text-left hover:underline">Leer más</button>
+</div>
+</div>
+<!-- Aviso 2 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+<div class="h-40 bg-slate-200 dark:bg-slate-700 relative">
+<img alt="Noticia 2" class="w-full h-full object-cover" data-alt="Group of mechanics training in a garage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnIo0mqVOaO2M34_yP9falJ5cyK-UsVrn4y2oSWK9KbNrm-p3bNEh4tI_iSsH4FH1-GhXY27juOHHXRzAoNUFnptuPwcbOtvZLnkwwOhjEERHtVkfyn3lANIU5W5Joz1zmu0WE9AltzhCnGxiHRkIVhC2JqUwOiYR2_1w_b8QoOOGnS7fxnlIFFmiRc7KB25ehIcQ1zdj2Dzcc3CJ6URZ_cKLfp616HV4lwCnzB63vmGymkLI0sHSiZCBFeVOQMnqqzmpl4Ox-hRU"/>
+<span class="absolute top-3 left-3 bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded">EVENTO</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<p class="text-xs text-slate-500 font-bold mb-2">12 Oct 2023</p>
+<h3 class="font-bold text-slate-900 dark:text-white mb-2 leading-snug">Taller de Capacitación Presencial: Seguridad Industrial</h3>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">Se invita a todo el personal técnico de la Sucursal Norte al taller práctico de seguridad...</p>
+<button class="mt-4 text-primary font-bold text-sm text-left hover:underline">Leer más</button>
+</div>
+</div>
+<!-- Aviso 3 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col">
+<div class="h-40 bg-slate-200 dark:bg-slate-700 relative">
+<img alt="Noticia 3" class="w-full h-full object-cover" data-alt="Close up of a car tire tread" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeV0wF-WLe1SYeFy_Nte2yflIeUYHSWNlc5ypqpo5I_sLt8XTo1bly0Lx4GO_e6kSaBoUQo2cXZe2a_TfHGZaC2hyMrSKs99HmCXaQJzcMEToEVyiFQc6r8fpAgGTtF7kNna1binZzNPq5sdwFqFGTYjk7yO1e00VNVg2s-VamR-Q35J1EPUTGryAeseu_8EJotw0jr_BHlUwBiCe68t5IW4dtQ85rdUUud0iMIZlWNJwXHaFbyX4XNqnYtziBlgJjwwjzEOffKrc"/>
+<span class="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded">PRODUCTO</span>
+</div>
+<div class="p-5 flex-1 flex flex-col">
+<p class="text-xs text-slate-500 font-bold mb-2">08 Oct 2023</p>
+<h3 class="font-bold text-slate-900 dark:text-white mb-2 leading-snug">Lanzamiento: Nueva Línea de Llantas para Invierno</h3>
+<p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">Conoce las características técnicas de nuestra nueva línea diseñada para máxima tracción...</p>
+<button class="mt-4 text-primary font-bold text-sm text-left hover:underline">Leer más</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,29 @@
+voy a desarrollar una aplicación para capacitación empresarial, la cual va a tener un solo panel tanto para usuarios como admins, solo que vamos  a tener roles de usuarios, y cada uno va a poder ver editar o crear lo que sea que se les de permiso.
+
+esta aplicación vaa estar en laravel con livewire y mysql.
+
+vamos a empezar a diseñar la base de datos, vamos a tener un usuario super admin que va a poder crear más admins, los admins van a poder dar de alta usuarios al sistema pero no eliminar admins, eso solo lo podrá hacer el super admin.
+
+necesitamos categorizar los usuarios y admins por departamentos, por ejemplo ventas, marketing, mostrador, tecnicos instaladores, etc, debemos poder crear esas categorías.
+
+necesitamos un creador de cursos, donde vamos a poder tener lecciones, y quizez o examenes, los examenes se desbloquean siempre y cuando se haya completado el 100% de las lecciones, debemos tener un rastreo de porcentaje de completado del curso, basado en lecciones, el botón de completar lección debe aparecer siempre y cuando el usuario haya logrado ver un 90% del video en caso de que sea video, si es un documento no hay problema le mostraremos el botón de completado,como verás un curso puede llegar a tener diferentes tipos de contenido, video, imagenes, powerpoint, pdf etc. Los cursos deben poder ser categorizados por tipo de tema, como marketing, ventas, instalación por decir algo.
+
+debemos poder asignar cursos por lotes de usuario o individuales, por lote sería asignarlo a una categorías de usuarios o departamentos, y se le adignaría a todo slos que están en ese departamento, pero también debemos tener una vista de detalle con el listado de usuarios que estan asignados a ese curso, donde podremos asignar más o quitar usuarios que ya estaban asignados, los videos los vamos a subir a youtube y vamos a embeber o ingresar el link para que se muestre el video.
+
+debemos guardar todos los datos de eventos del curso cuanto se ha visto, cuantos usuarios han tomado el curso, completado, en curso sin iniciar, el examen calificaciones, etc.
+
+un dashboard con todas estas estadísticas para los admins o gerentes
+
+recordemos que esta es una empresa multisucursal, debemos poder crear las sucursales con todos los datos de dirección y datos fiscales en caso de que los tengan.
+
+cada usuario hay que asignarlo a una sucursal en específico, si es jefe de zona que pueda asiganrsele más de una sucursal, para las cuales está a cargo.
+
+esta información de sucursales que nos sirva para filtrar las estadísticas del dashboard.
+
+necesitamos un modulo de scorecard donde el usuario va a ingresar certa información de ventas y lanzar un reporte como el que te muestro, desconozco que tipo de información meten pero debido a que es una llantera seguramente ingresan información de las ventas diarias.
+
+un modulo que se llame biblioteca donde básicamente van a tener recursos categorizados por tipo de recurso, por categoría del tema como ventas, marketing, etc. donde igual podremos subir libros, videos, etc.
+
+otro modulo de aviso donde vamos a subir imagenes, textos etc, y esto debe aparecer en el dashboard principal de todos.
+
+vamos a planear esto, principalmente la base de datos por favor, tablas, relaciones etc
