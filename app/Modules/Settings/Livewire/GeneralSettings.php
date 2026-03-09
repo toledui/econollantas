@@ -19,6 +19,8 @@ class GeneralSettings extends Component
     public $theme_color;
     public $site_logo; // Path for viewing
     public $new_logo;  // File for uploading
+    public $dashboard_banner; // Path for viewing
+    public $new_dashboard_banner; // File for uploading
 
     public function mount()
     {
@@ -30,6 +32,7 @@ class GeneralSettings extends Component
         $this->footer_text = Setting::get('footer_text', '© ' . date('Y') . ' EconoLlantas. Todos los derechos reservados.');
         $this->theme_color = Setting::get('theme_color', '#363d82');
         $this->site_logo = Setting::get('site_logo', 'econollantaslogo.png');
+        $this->dashboard_banner = Setting::get('dashboard_banner', 'fondo-econollantas.jpeg');
     }
 
     public function save()
@@ -47,6 +50,13 @@ class GeneralSettings extends Component
             Setting::set('site_logo', $path);
             $this->site_logo = $path;
             $this->new_logo = null;
+        }
+
+        if ($this->new_dashboard_banner) {
+            $path = $this->new_dashboard_banner->store('banners', 'public');
+            Setting::set('dashboard_banner', $path);
+            $this->dashboard_banner = $path;
+            $this->new_dashboard_banner = null;
         }
 
         $this->dispatch('theme-updated', color: $this->theme_color);

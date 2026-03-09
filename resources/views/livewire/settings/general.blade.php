@@ -96,6 +96,40 @@
                         </div>
 
                         <div>
+                            <x-input-label value="Imagen de Portada (Dashboard)" />
+                            <div class="mt-4 flex flex-col xl:flex-row items-start xl:items-center gap-6">
+                                <div
+                                    class="w-full xl:w-48 h-24 rounded-2xl bg-white border border-slate-200 flex items-center justify-center p-1 shadow-inner overflow-hidden relative group">
+                                    @if($new_dashboard_banner)
+                                        <img src="{{ $new_dashboard_banner->temporaryUrl() }}"
+                                            class="h-full w-full object-cover scale-100 group-hover:scale-110 transition-transform duration-500 rounded-xl">
+                                    @else
+                                        <img src="{{ asset('storage/' . $dashboard_banner) }}"
+                                            class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl">
+                                    @endif
+
+                                    <div wire:loading wire:target="new_dashboard_banner"
+                                        class="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl">
+                                        <span class="material-symbols-outlined animate-spin text-primary">sync</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="cursor-pointer group">
+                                        <span
+                                            class="px-4 py-2 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-700 hover:border-primary transition-all inline-flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm">cloud_upload</span>
+                                            Cambiar Portada
+                                        </span>
+                                        <input type="file" wire:model="new_dashboard_banner" class="hidden"
+                                            accept="image/*">
+                                    </label>
+                                    <p class="mt-2 text-[10px] text-slate-500">Recomendado: JPG o PNG, 1920x1080px.</p>
+                                    <x-input-error :messages="$errors->get('new_dashboard_banner')" class="mt-2" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
                             <x-input-label for="theme_color" value="Color Principal (Marca)" />
                             <div class="flex items-center gap-4 mt-4">
                                 <input type="color" id="theme_color" wire:model="theme_color"

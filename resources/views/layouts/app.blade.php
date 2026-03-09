@@ -192,7 +192,7 @@
                 @endif
 
                 @if(Auth::user()->hasPermission('users.view') || Auth::user()->hasPermission('departments.view') || Auth::user()->hasPermission('branches.view') || Auth::user()->hasPermission('announcements.view') || Auth::user()->hasPermission('reports.view') || Auth::user()->hasPermission('settings.view'))
-                        <div class="pt-4 pb-2 px-4 whitespace-nowrap overflow-hidden" x-show="sidebarOpen || mobileMenuOpen"
+                    <div class="pt-4 pb-2 px-4 whitespace-nowrap overflow-hidden" x-show="sidebarOpen || mobileMenuOpen"
                         x-cloak>
                         <div class="text-[10px] uppercase tracking-widest text-white/50 font-bold">Administración</div>
                     </div>
@@ -275,7 +275,7 @@
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <header
-                class="h-16 bg-primary text-white flex items-center justify-between px-4 lg:px-8 shadow-md z-10 transition-colors duration-300">
+                class="relative h-16 bg-primary text-white flex items-center justify-between px-4 lg:px-8 shadow-md z-50 transition-colors duration-300">
 
                 <div class="flex items-center gap-3">
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
