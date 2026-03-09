@@ -183,54 +183,77 @@
                     icon="dashboard" label="Dashboard" />
                 <x-nav-link-custom href="{{ route('courses.user-index') }}"
                     :active="request()->routeIs('courses.user-index*')" icon="auto_stories" label="Mis Cursos" />
-                <x-nav-link-custom href="{{ route('courses') }}" :active="request()->routeIs('courses*') && !request()->routeIs('courses.user-index*')" icon="school" label="Cursos" />
-                <x-nav-link-custom href="{{ route('library') }}" :active="request()->routeIs('library')"
-                    icon="library_books" label="Biblioteca" />
+                @if(Auth::user()->hasPermission('courses.view'))
+                    <x-nav-link-custom href="{{ route('courses') }}" :active="request()->routeIs('courses*') && !request()->routeIs('courses.user-index*')" icon="school" label="Cursos" />
+                @endif
+                @if(Auth::user()->hasPermission('library.view'))
+                    <x-nav-link-custom href="{{ route('library') }}" :active="request()->routeIs('library')"
+                        icon="library_books" label="Biblioteca" />
+                @endif
 
-                <div class="pt-4 pb-2 px-4 whitespace-nowrap overflow-hidden" x-show="sidebarOpen || mobileMenuOpen"
-                    x-cloak>
-                    <div class="text-[10px] uppercase tracking-widest text-white/50 font-bold">Administración</div>
-                </div>
-
-                <x-nav-link-custom href="{{ route('users') }}" :active="request()->routeIs('users')" icon="group"
-                    label="Usuarios" />
-                <x-nav-link-custom href="{{ route('departments') }}" :active="request()->routeIs('departments')"
-                    icon="corporate_fare" label="Departamentos" />
-                <x-nav-link-custom href="{{ route('branches') }}" :active="request()->routeIs('branches')"
-                    icon="location_on" label="Sucursales" />
-                <x-nav-link-custom href="{{ route('announcements') }}" :active="request()->routeIs('announcements')"
-                    icon="campaign" label="Avisos" />
-                <x-nav-link-custom href="{{ route('reports') }}" :active="request()->routeIs('reports*')"
-                    icon="analytics" label="Reportes" />
-
-                <div x-data="{ expanded: {{ request()->routeIs('settings*') ? 'true' : 'false' }} }">
-                    <button @click="expanded = !expanded"
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group relative"
-                        :class="expanded || '{{ request()->routeIs('settings*') }}' ? 'bg-white/10 text-white shadow-lg' : 'text-white/70 hover:bg-white/5 hover:text-white'">
-                        <div class="flex items-center">
-                            <span class="material-symbols-outlined mr-3 transition-transform group-hover:scale-110"
-                                :class="expanded || '{{ request()->routeIs('settings*') }}' ? 'text-white fill-1' : 'text-white/70'">settings</span>
-                            <span class="text-sm font-bold tracking-wide"
-                                x-show="sidebarOpen || mobileMenuOpen">Configuración</span>
-                        </div>
-                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
-                            :class="expanded ? 'rotate-180' : ''"
-                            x-show="sidebarOpen || mobileMenuOpen">expand_more</span>
-                    </button>
-
-                    <div x-show="expanded && (sidebarOpen || mobileMenuOpen)" x-cloak class="mt-1 space-y-1 px-4">
-                        <a href="{{ route('settings') }}"
-                            class="flex items-center px-4 py-2 rounded-lg text-xs font-medium transition-colors border-l-2 ml-4"
-                            :class="'{{ request()->routeIs('settings') }}' ? 'border-white bg-white/10 text-white' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'">
-                            General
-                        </a>
-                        <a href="{{ route('settings.mail') }}"
-                            class="flex items-center px-4 py-2 rounded-lg text-xs font-medium transition-colors border-l-2 ml-4"
-                            :class="'{{ request()->routeIs('settings.mail') }}' ? 'border-white bg-white/10 text-white' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'">
-                            Correo (SMTP)
-                        </a>
+                @if(Auth::user()->hasPermission('users.view') || Auth::user()->hasPermission('departments.view') || Auth::user()->hasPermission('branches.view') || Auth::user()->hasPermission('announcements.view') || Auth::user()->hasPermission('reports.view') || Auth::user()->hasPermission('settings.view'))
+                        <div class="pt-4 pb-2 px-4 whitespace-nowrap overflow-hidden" x-show="sidebarOpen || mobileMenuOpen"
+                        x-cloak>
+                        <div class="text-[10px] uppercase tracking-widest text-white/50 font-bold">Administración</div>
                     </div>
-                </div>
+                @endif
+
+                @if(Auth::user()->hasPermission('users.view'))
+                    <x-nav-link-custom href="{{ route('users') }}" :active="request()->routeIs('users')" icon="group"
+                        label="Usuarios" />
+                @endif
+                @if(Auth::user()->hasPermission('departments.view'))
+                    <x-nav-link-custom href="{{ route('departments') }}" :active="request()->routeIs('departments')"
+                        icon="corporate_fare" label="Departamentos" />
+                @endif
+                @if(Auth::user()->hasPermission('branches.view'))
+                    <x-nav-link-custom href="{{ route('branches') }}" :active="request()->routeIs('branches')"
+                        icon="location_on" label="Sucursales" />
+                @endif
+                @if(Auth::user()->hasPermission('announcements.view'))
+                    <x-nav-link-custom href="{{ route('announcements') }}" :active="request()->routeIs('announcements')"
+                        icon="campaign" label="Avisos" />
+                @endif
+                @if(Auth::user()->hasPermission('reports.view'))
+                    <x-nav-link-custom href="{{ route('reports') }}" :active="request()->routeIs('reports*')"
+                        icon="analytics" label="Reportes" />
+                @endif
+
+                @if(Auth::user()->hasPermission('settings.view'))
+                    <div x-data="{ expanded: {{ request()->routeIs('settings*') ? 'true' : 'false' }} }">
+                        <button @click="expanded = !expanded"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group relative"
+                            :class="expanded || '{{ request()->routeIs('settings*') }}' ? 'bg-white/10 text-white shadow-lg' : 'text-white/70 hover:bg-white/5 hover:text-white'">
+                            <div class="flex items-center">
+                                <span class="material-symbols-outlined mr-3 transition-transform group-hover:scale-110"
+                                    :class="expanded || '{{ request()->routeIs('settings*') }}' ? 'text-white fill-1' : 'text-white/70'">settings</span>
+                                <span class="text-sm font-bold tracking-wide"
+                                    x-show="sidebarOpen || mobileMenuOpen">Configuración</span>
+                            </div>
+                            <span class="material-symbols-outlined text-sm transition-transform duration-200"
+                                :class="expanded ? 'rotate-180' : ''"
+                                x-show="sidebarOpen || mobileMenuOpen">expand_more</span>
+                        </button>
+
+                        <div x-show="expanded && (sidebarOpen || mobileMenuOpen)" x-cloak class="mt-1 space-y-1 px-4">
+                            <a href="{{ route('settings') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-xs font-medium transition-colors border-l-2 ml-4"
+                                :class="'{{ request()->routeIs('settings') }}' ? 'border-white bg-white/10 text-white' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'">
+                                General
+                            </a>
+                            <a href="{{ route('settings.mail') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-xs font-medium transition-colors border-l-2 ml-4"
+                                :class="'{{ request()->routeIs('settings.mail') }}' ? 'border-white bg-white/10 text-white' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'">
+                                Correo (SMTP)
+                            </a>
+                            <a href="{{ route('settings.roles') }}"
+                                class="flex items-center px-4 py-2 rounded-lg text-xs font-medium transition-colors border-l-2 ml-4"
+                                :class="'{{ request()->routeIs('settings.roles') }}' ? 'border-white bg-white/10 text-white' : 'border-transparent text-white/50 hover:text-white hover:bg-white/5'">
+                                Roles y Permisos
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </nav>
 
             {{-- Desktop: sidebar toggle --}}

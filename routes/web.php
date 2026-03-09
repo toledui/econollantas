@@ -47,6 +47,7 @@ Route::middleware(['auth'])->prefix('app')->group(function () {
 
     Route::get('/settings', GeneralSettings::class)->name('settings');
     Route::get('/settings/mail', MailSettings::class)->name('settings.mail');
+    Route::get('/settings/roles', \App\Modules\Settings\Livewire\RoleSettings::class)->name('settings.roles');
 });
 
 Route::middleware(['auth'])->group(function () {

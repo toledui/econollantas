@@ -53,6 +53,11 @@ class LibraryIndex extends Component
     public string $type_description = '';
     public bool $type_active = true;
 
+    public function mount(): void
+    {
+        $this->requirePermission('view');
+    }
+
     protected function rules(): array
     {
         return [

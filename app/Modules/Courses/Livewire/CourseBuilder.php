@@ -94,6 +94,8 @@ class CourseBuilder extends Component
 
     public function saveInfo()
     {
+        $this->requirePermission($this->isNew ? 'create' : 'edit');
+
         $this->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',

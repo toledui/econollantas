@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         \Livewire\Livewire::component('scorecard.dashboard', \App\Modules\Scorecard\Livewire\Dashboard::class);
         \Livewire\Livewire::component('settings.general', \App\Modules\Settings\Livewire\GeneralSettings::class);
         \Livewire\Livewire::component('settings.mail', \App\Modules\Settings\Livewire\MailSettings::class);
+        \Livewire\Livewire::component('settings.roles', \App\Modules\Settings\Livewire\RoleSettings::class);
         \Livewire\Livewire::component('users.index', \App\Modules\Users\Livewire\UserIndex::class);
         \Livewire\Livewire::component('departments.index', \App\Modules\Users\Livewire\DepartmentIndex::class);
         \Livewire\Livewire::component('announcements.index', \App\Modules\Announcements\Livewire\AnnouncementIndex::class);
@@ -42,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
         \Livewire\Livewire::component('courses.user-courses-index', \App\Modules\Courses\Livewire\UserCoursesIndex::class);
         \Livewire\Livewire::component('courses.player', \App\Modules\Courses\Livewire\CoursePlayer::class);
         \Livewire\Livewire::component('courses.take-assessment', \App\Modules\Courses\Livewire\TakeAssessment::class);
+
+        // Reports Module
+        \Livewire\Livewire::component('reports.dashboard', \App\Modules\Reports\Livewire\ReportsDashboard::class);
+        \Livewire\Livewire::component('reports.courses', \App\Modules\Reports\Livewire\CourseReports::class);
+        \Livewire\Livewire::component('reports.users', \App\Modules\Reports\Livewire\UserReports::class);
 
         // Load Mail Settings globally
         try {

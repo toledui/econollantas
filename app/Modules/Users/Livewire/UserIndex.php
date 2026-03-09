@@ -42,6 +42,11 @@ class UserIndex extends Component
         'avatar' => 'nullable|image|max:1024',
     ];
 
+    public function mount()
+    {
+        abort_if(!auth()->user()->hasPermission('users.view'), 403, 'No tienes permisos para ver usuarios.');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -61,6 +66,7 @@ class UserIndex extends Component
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('users.create'), 403);
         $this->resetValidation();
         $this->reset(['name', 'email', 'password', 'password_confirmation', 'status', 'primary_branch_id', 'department_id', 'position', 'avatar', 'selectedRoles', 'selectedBranches', 'editingUserId', 'current_avatar']);
         $this->status = 'active';
@@ -69,6 +75,7 @@ class UserIndex extends Component
 
     public function edit(User $user)
     {
+        abort_if(!auth()->user()->hasPermission('users.edit'), 403);
         $this->resetValidation();
         $this->editingUserId = $user->id;
         $this->name = $user->name;
@@ -89,6 +96,12 @@ class UserIndex extends Component
 
     public function save()
     {
+        if ($this->editingUserId) {
+            abort_if(!auth()->user()->hasPermission('users.edit'), 403);
+        } else {
+            abort_if(!auth()->user()->hasPermission('users.create'), 403);
+        }
+
         $rules = $this->rules;
         if ($this->editingUserId) {
             $rules['email'] = 'required|email|max:255|unique:users,email,' . $this->editingUserId;
@@ -169,6 +182,8 @@ class UserIndex extends Component
 
     public function toggleStatus(User $user)
     {
+        abort_if(!auth()->user()->hasPermission('users.edit'), 403);
+
         if ($user->status === 'active' && $user->roles()->where('name', 'super_admin')->exists()) {
             $this->dispatch('toast', [
                 'type' => 'error',
@@ -188,6 +203,8 @@ class UserIndex extends Component
 
     public function delete(User $user)
     {
+        abort_if(!auth()->user()->hasPermission('users.delete'), 403);
+
         if ($user->roles()->where('name', 'super_admin')->exists()) {
             $this->dispatch('toast', [
                 'type' => 'error',

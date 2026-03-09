@@ -25,6 +25,11 @@ class CourseIndex extends Component
     public string $cat_description = '';
     public bool $cat_active = true;
 
+    public function mount(): void
+    {
+        $this->requirePermission('view');
+    }
+
     // Reset pagination on filter change
     public function updatingSearch(): void
     {

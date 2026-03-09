@@ -23,6 +23,7 @@ class MailSettings extends Component
 
     public function mount()
     {
+        abort_if(!auth()->user()->hasPermission('settings.view'), 403, 'No tienes permisos para ver configuración de correo.');
         $this->mail_mailer = Setting::get('mail_mailer', config('mail.default'));
         $this->mail_host = Setting::get('mail_host', config('mail.mailers.smtp.host'));
         $this->mail_port = Setting::get('mail_port', config('mail.mailers.smtp.port'));
@@ -36,6 +37,7 @@ class MailSettings extends Component
 
     public function save()
     {
+        abort_if(!auth()->user()->hasPermission('settings.edit'), 403);
         Setting::set('mail_mailer', $this->mail_mailer, 'mail');
         Setting::set('mail_host', $this->mail_host, 'mail');
         Setting::set('mail_port', $this->mail_port, 'mail');
@@ -55,6 +57,7 @@ class MailSettings extends Component
 
     public function sendTestMail()
     {
+        abort_if(!auth()->user()->hasPermission('settings.edit'), 403);
         $this->validate([
             'test_email' => 'required|email'
         ]);

@@ -26,6 +26,11 @@ class DepartmentIndex extends Component
         'active' => 'boolean',
     ];
 
+    public function mount()
+    {
+        abort_if(!auth()->user()->hasPermission('departments.view'), 403, 'No tienes permisos para ver departamentos.');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -33,6 +38,7 @@ class DepartmentIndex extends Component
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('departments.create'), 403);
         $this->resetValidation();
         $this->reset(['name', 'icon', 'description', 'active', 'editingDepartmentId']);
         $this->active = true;
@@ -42,6 +48,7 @@ class DepartmentIndex extends Component
 
     public function edit(Department $department)
     {
+        abort_if(!auth()->user()->hasPermission('departments.edit'), 403);
         $this->resetValidation();
         $this->editingDepartmentId = $department->id;
         $this->name = $department->name;
@@ -53,6 +60,12 @@ class DepartmentIndex extends Component
 
     public function save()
     {
+        if ($this->editingDepartmentId) {
+            abort_if(!auth()->user()->hasPermission('departments.edit'), 403);
+        } else {
+            abort_if(!auth()->user()->hasPermission('departments.create'), 403);
+        }
+
         $this->validate();
 
         Department::updateOrCreate(
@@ -75,6 +88,7 @@ class DepartmentIndex extends Component
 
     public function toggleStatus(Department $department)
     {
+        abort_if(!auth()->user()->hasPermission('departments.edit'), 403);
         $department->active = !$department->active;
         $department->save();
 
@@ -86,6 +100,8 @@ class DepartmentIndex extends Component
 
     public function delete(Department $department)
     {
+        abort_if(!auth()->user()->hasPermission('departments.delete'), 403);
+
         // Check for associated users
         if ($department->users()->exists()) {
             $this->dispatch('toast', [

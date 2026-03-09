@@ -30,6 +30,11 @@ class BranchIndex extends Component
         'active' => 'boolean',
     ];
 
+    public function mount()
+    {
+        abort_if(!auth()->user()->hasPermission('branches.view'), 403, 'No tienes permisos para ver sucursales.');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -37,6 +42,7 @@ class BranchIndex extends Component
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('branches.create'), 403);
         $this->resetValidation();
         $this->reset(['name', 'code', 'phone', 'email', 'state', 'city', 'zip', 'address_line1', 'address_line2', 'editingBranchId', 'legal_name', 'tax_id', 'tax_regime', 'invoice_email']);
         $this->active = true;
@@ -47,6 +53,7 @@ class BranchIndex extends Component
 
     public function edit(Branch $branch)
     {
+        abort_if(!auth()->user()->hasPermission('branches.edit'), 403);
         $this->resetValidation();
         $this->editingBranchId = $branch->id;
         $this->name = $branch->name;
@@ -70,6 +77,12 @@ class BranchIndex extends Component
 
     public function save()
     {
+        if ($this->editingBranchId) {
+            abort_if(!auth()->user()->hasPermission('branches.edit'), 403);
+        } else {
+            abort_if(!auth()->user()->hasPermission('branches.create'), 403);
+        }
+
         $rules = $this->rules;
         if ($this->editingBranchId) {
             $rules['code'] = 'required|string|max:50|unique:branches,code,' . $this->editingBranchId;
@@ -107,6 +120,7 @@ class BranchIndex extends Component
 
     public function toggleStatus(Branch $branch)
     {
+        abort_if(!auth()->user()->hasPermission('branches.edit'), 403);
         $branch->active = !$branch->active;
         $branch->save();
 
@@ -118,6 +132,8 @@ class BranchIndex extends Component
 
     public function delete(Branch $branch)
     {
+        abort_if(!auth()->user()->hasPermission('branches.delete'), 403);
+
         // Verificar relación muchos a muchos y también relación como sucursal primaria
         if ($branch->users()->exists() || $branch->primaryBranchUsers()->exists()) {
             $this->dispatch('toast', [

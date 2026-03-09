@@ -11,6 +11,10 @@ use App\Modules\Courses\Models\LessonProgress;
 
 class ReportsDashboard extends Component
 {
+    public function mount()
+    {
+        abort_if(!auth()->user()->hasPermission('reports.view'), 403, 'No tienes permisos para ver reportes.');
+    }
     #[Layout('layouts.app')]
     public function render()
     {

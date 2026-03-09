@@ -22,6 +22,7 @@ class GeneralSettings extends Component
 
     public function mount()
     {
+        abort_if(!auth()->user()->hasPermission('settings.view'), 403, 'No tienes permisos para ver configuración.');
         $this->site_name = Setting::get('site_name', 'EconoLlantas');
         $this->contact_email = Setting::get('contact_email', 'contacto@econollantas.com');
         $this->contact_phone = Setting::get('contact_phone', '');
@@ -33,6 +34,7 @@ class GeneralSettings extends Component
 
     public function save()
     {
+        abort_if(!auth()->user()->hasPermission('settings.edit'), 403);
         Setting::set('site_name', $this->site_name);
         Setting::set('contact_email', $this->contact_email);
         Setting::set('contact_phone', $this->contact_phone);

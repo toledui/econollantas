@@ -36,6 +36,11 @@ class AnnouncementIndex extends Component
         'expires_at' => 'nullable|date|after:today',
     ];
 
+    public function mount()
+    {
+        abort_if(!auth()->user()->hasPermission('announcements.view'), 403, 'No tienes permisos para gestionar avisos.');
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -51,6 +56,7 @@ class AnnouncementIndex extends Component
 
     public function create()
     {
+        abort_if(!auth()->user()->hasPermission('announcements.create'), 403);
         $this->resetValidation();
         $this->reset(['title', 'category', 'content', 'priority', 'active', 'expires_at', 'image', 'attachment', 'current_image', 'current_attachment', 'editingAnnouncementId']);
         $this->priority = 'normal';
@@ -60,6 +66,7 @@ class AnnouncementIndex extends Component
 
     public function edit(Announcement $announcement)
     {
+        abort_if(!auth()->user()->hasPermission('announcements.edit'), 403);
         $this->resetValidation();
         $this->reset(['image', 'attachment']);
         $this->editingAnnouncementId = $announcement->id;
@@ -76,6 +83,12 @@ class AnnouncementIndex extends Component
 
     public function save()
     {
+        if ($this->editingAnnouncementId) {
+            abort_if(!auth()->user()->hasPermission('announcements.edit'), 403);
+        } else {
+            abort_if(!auth()->user()->hasPermission('announcements.create'), 403);
+        }
+
         $this->validate();
 
         $data = [
@@ -123,6 +136,7 @@ class AnnouncementIndex extends Component
 
     public function toggleStatus(Announcement $announcement)
     {
+        abort_if(!auth()->user()->hasPermission('announcements.edit'), 403);
         $announcement->active = !$announcement->active;
         $announcement->save();
 
@@ -134,6 +148,8 @@ class AnnouncementIndex extends Component
 
     public function delete(Announcement $announcement)
     {
+        abort_if(!auth()->user()->hasPermission('announcements.delete'), 403);
+
         if ($announcement->image) {
             Storage::delete('public/' . $announcement->image);
         }
