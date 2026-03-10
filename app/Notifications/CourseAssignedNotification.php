@@ -44,7 +44,7 @@ class CourseAssignedNotification extends Notification
             'title' => 'Nuevo Curso Asignado',
             'message' => 'Se te ha asignado el curso: ' . $this->course->title,
             'priority' => 'high',
-            'url' => route('courses'),
+            'url' => route('courses.player', $this->course->id),
         ];
     }
 }
