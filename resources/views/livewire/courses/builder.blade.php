@@ -23,7 +23,7 @@
                  {{ $status === 'published' ? ' bg-emerald-100 text-emerald-600' : ($status === 'draft' ? ' bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500') }}">
                                     {{ $status }}
                                 </span>
-                                <a href="{{ route('courses.player', $course->slug) }}" target="_blank"
+                                <a href="{{ route('courses.player', $course->id) }}" target="_blank"
                                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-sm rounded-xl transition-all shadow-sm">
                                     <span class="material-symbols-outlined text-lg">preview</span> Vista Previa
                                 </a>

@@ -34,6 +34,7 @@ class CoursePlayer extends Component
     public $selectedOptions = []; // [question_id => [option_id, ...]]
     public bool $showingResults = false;
     public ?array $lastResult = null;
+    public bool $isPreview = false;
 
     public function mount(Course $course, ?Lesson $lesson = null)
     {
@@ -50,6 +51,8 @@ class CoursePlayer extends Component
         if (!$this->enrollment && !$canPreview) {
             abort(403, 'No estás inscrito en este curso.');
         }
+
+        $this->isPreview = !$this->enrollment && $canPreview;
 
         // Determine which lesson to load
         if ($lesson) {
@@ -124,20 +127,22 @@ class CoursePlayer extends Component
 
         // Check if previous lessons are completed (Simple sequential control)
         // For Phase 6.2 requirement: "Restricción Secuencial" 
-        $previousLessons = $this->course->lessons->where('order', '<', $lesson->order);
-        foreach ($previousLessons as $prev) {
-            $progress = LessonProgress::where('user_id', Auth::id())
-                ->where('lesson_id', $prev->id)
-                ->whereNotNull('completed_at')
-                ->exists();
+        if (!$this->isPreview) {
+            $previousLessons = $this->course->lessons->where('order', '<', $lesson->order);
+            foreach ($previousLessons as $prev) {
+                $progress = LessonProgress::where('user_id', Auth::id())
+                    ->where('lesson_id', $prev->id)
+                    ->whereNotNull('completed_at')
+                    ->exists();
 
-            if (!$progress) {
-                // Flash message or dispatch event
-                $this->dispatch('toast', [
-                    'type' => 'warning',
-                    'message' => 'Debes completar las lecciones anteriores primero.',
-                ]);
-                return;
+                if (!$progress) {
+                    // Flash message or dispatch event
+                    $this->dispatch('toast', [
+                        'type' => 'warning',
+                        'message' => 'Debes completar las lecciones anteriores primero.',
+                    ]);
+                    return;
+                }
             }
         }
 
@@ -203,18 +208,20 @@ class CoursePlayer extends Component
     public function selectAssessment(int $assessmentId): void
     {
         // Check prerequisites
-        $totalLessons = $this->course->lessons->count();
-        $completedLessons = LessonProgress::where('user_id', Auth::id())
-            ->where('course_id', $this->course->id)
-            ->whereNotNull('completed_at')
-            ->count();
+        if (!$this->isPreview) {
+            $totalLessons = $this->course->lessons->count();
+            $completedLessons = LessonProgress::where('user_id', Auth::id())
+                ->where('course_id', $this->course->id)
+                ->whereNotNull('completed_at')
+                ->count();
 
-        if ($completedLessons < $totalLessons) {
-            $this->dispatch('toast', [
-                'type' => 'warning',
-                'message' => 'Debes completar todas las lecciones antes de presentar la evaluación.',
-            ]);
-            return;
+            if ($completedLessons < $totalLessons) {
+                $this->dispatch('toast', [
+                    'type' => 'warning',
+                    'message' => 'Debes completar todas las lecciones antes de presentar la evaluación.',
+                ]);
+                return;
+            }
         }
 
         $this->currentAssessment = Assessment::with('questions.options')->findOrFail($assessmentId);

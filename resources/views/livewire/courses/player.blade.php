@@ -279,7 +279,7 @@
  <p class="text-sm font-bold text-slate-700 group-hover/navnext:text-primary transition-colors">{{ str($nextL->title)->limit(25) }}</p>
  </div>
  </button>
- @elseif($prog === 100 && $course->assessments->count() > 0)
+ @elseif(($this->isPreview || $prog === 100) && $course->assessments->count() > 0)
  <button wire:click="selectAssessment({{ $course->assessments->first()->id }})" class="px-6 py-3 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/30 flex items-center gap-2">
  <span>Ir al Examen</span>
  <span class="material-symbols-outlined text-lg">military_tech</span>
@@ -354,7 +354,7 @@
  @if(!$isActive && !$isCompleted)
  @php 
  $prevLesson = $course->lessons->where('order','<', $lesson->order)->last();
- $isLocked = $prevLesson && !(isset($lessonProgress[$prevLesson->id]) && $lessonProgress[$prevLesson->id]->completed_at);
+ $isLocked = !$this->isPreview && $prevLesson && !(isset($lessonProgress[$prevLesson->id]) && $lessonProgress[$prevLesson->id]->completed_at);
  @endphp
  @if($isLocked)
  <span class="material-symbols-outlined text-slate-400 text-lg">lock</span>
@@ -386,7 +386,7 @@
  <div class="p-4 bg-slate-100 border-t border-slate-200">
  @foreach($course->assessments as $assessment)
  @php 
- $isLocked = $prog < 100;
+ $isLocked = !$this->isPreview && ($prog < 100);
  $isActAssessment = $viewMode ==='assessment'&& $currentAssessment && $currentAssessment->id === $assessment->id;
  $attempts = ($assessmentAttempts[$assessment->id] ?? collect());
  $count = $attempts->count();
