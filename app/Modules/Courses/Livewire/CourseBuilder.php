@@ -85,7 +85,7 @@ class CourseBuilder extends Component
         if ($this->isNew && $tab !== 'info') {
             $this->dispatch('toast', [
                 'type' => 'warning',
-                'message' => 'Primero debes guardar la información básica del curso.',
+                'message' => 'Primero debes llenar y guardar la Información General para habilitar las demás pestañas.',
             ]);
             return;
         }
@@ -125,7 +125,7 @@ class CourseBuilder extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'Curso creado. Ahora puedes añadir lecciones.',
+                'message' => 'Curso creado. Ahora puedes añadir contenido o evaluaciones.',
             ]);
 
             // Redirect to builder edit view to update URL

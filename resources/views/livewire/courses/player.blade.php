@@ -455,7 +455,7 @@
  <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-300" :class="showInfo ?' rotate-180' :''">keyboard_arrow_down</span>
  </div>
  <p class="text-[10px] text-slate-500 font-medium mb-4 leading-relaxed" x-show="showInfo" x-collapse x-cloak>
- Completa todas las lecciones y supera el examen con un puntaje mayor al {{ number_format($course->assessments->first()->min_score ?? 80, 0) }}%.
+ Completa todas las lecciones y supera el examen con un puntaje mayor al {{ number_format($course->assessments->first()?->min_score ?? 80, 0) }}%.
  </p>
  <div class="w-full bg-slate-200 h-1 rounded-full overflow-hidden">
  <div class="bg-emerald-500 h-full rounded-full shadow-[0_0_10px_#10b981] transition-all duration-1000" style="width: {{ $prog }}%"></div>

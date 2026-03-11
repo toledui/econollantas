@@ -55,6 +55,9 @@ class CoursePlayer extends Component
         $this->isPreview = !$this->enrollment && $canPreview;
 
         // Determine which lesson to load
+        $totalLessons = $this->course->lessons->count();
+        $totalAssessments = $this->course->assessments->count();
+
         if ($lesson) {
             // Explicit lesson passed via URL
             $this->currentLesson = $lesson;
@@ -81,7 +84,15 @@ class CoursePlayer extends Component
             }
         }
 
-        if ($this->currentLesson) {
+        if ($totalLessons === 0 && $totalAssessments > 0) {
+            $this->selectAssessment($this->course->assessments->first()->id);
+            if ($this->enrollment) {
+                 if ($this->enrollment->status === 'not_started') {
+                    $this->enrollment->update(['status' => 'in_progress']);
+                }
+                $this->checkCourseCompletion();
+            }
+        } elseif ($this->currentLesson) {
             // Restore last viewed content within the lesson, or default to first
             if (
                 $this->enrollment && $this->enrollment->last_content_id
@@ -387,7 +398,7 @@ class CoursePlayer extends Component
             ->whereNotNull('completed_at')
             ->count();
 
-        if ($totalLessons > 0 && $completedLessons >= $totalLessons) {
+        if ($completedLessons >= $totalLessons) {
             // Check if all assessments are passed
             $totalAssessments = $this->course->assessments->count();
             $passedAssessments = AssessmentAttempt::where('user_id', Auth::id())
@@ -424,7 +435,7 @@ class CoursePlayer extends Component
 
         $totalLessons = $this->course->lessons->count();
         $completedLessons = $lessonProgress->filter(fn($lp) => $lp->completed_at)->count();
-        $prog = $totalLessons > 0 ? floor(($completedLessons / $totalLessons) * 100) : 0;
+        $prog = $totalLessons > 0 ? floor(($completedLessons / $totalLessons) * 100) : 100; // If no lessons, progress is essentially 100% implicitly since they don't need to do any lessons
 
         $canDownloadCertificate = ($prog >= 100);
         if ($canDownloadCertificate && $this->course->assessments->count() > 0) {
