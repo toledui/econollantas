@@ -44,9 +44,20 @@ class CourseIndex extends Component
         $this->resetPage();
     }
 
-    public function delete(Course $course): void
+    public function delete($id): void
     {
         $this->requirePermission('delete');
+
+        $course = Course::findOrFail($id);
+
+        // Check if there are assigned students (excluding revoked assignments)
+        if ($course->enrolledUsers()->where('status', '!=', 'revoked')->exists()) {
+            $this->dispatch('toast', [
+                'type' => 'error',
+                'message' => 'No puedes eliminar un curso que tiene alumnos asignados. Prueba a archivarlo o cambiar su estado a borrador.',
+            ]);
+            return;
+        }
 
         if ($course->cover_image_path) {
             \Illuminate\Support\Facades\Storage::delete('public/' . $course->cover_image_path);
