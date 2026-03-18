@@ -246,6 +246,11 @@ class CoursePlayer extends Component
 
         // Check for existing attempts
         $this->checkAttemptStatus();
+
+        // Always show results/start screen first so the user must click
+        // "Comenzar" or "Reintentar", which calls startAssessment() and
+        // creates the AssessmentAttempt record before the quiz is rendered.
+        $this->showingResults = true;
     }
 
     private function checkAttemptStatus(): void

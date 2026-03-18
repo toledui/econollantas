@@ -102,16 +102,39 @@
  {{-- Assessment View --}}
  <div class="w-full max-w-4xl">
  @if($showingResults)
- {{-- Results Screen --}}
+ {{-- Results / Start Screen --}}
+ @php $hasAttempts = ($lastResult['total_attempts'] ?? 0) > 0; @endphp
  <div class="bg-white rounded-[3rem] p-8 md:p-12 border border-slate-200 shadow-2xl text-center">
- <div @class(['size-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg', 'bg-emerald-500 text-white shadow-emerald-500/20'=> $lastResult['passed'], 'bg-red-500 text-white shadow-red-500/20'=> !$lastResult['passed']
+ <div @class(['size-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg',
+ 'bg-emerald-500 text-white shadow-emerald-500/20' => $hasAttempts && $lastResult['passed'],
+ 'bg-red-500 text-white shadow-red-500/20' => $hasAttempts && !$lastResult['passed'],
+ 'bg-primary text-white shadow-primary/20' => !$hasAttempts,
  ])>
- <span class="material-symbols-outlined text-5xl">{{ $lastResult['passed'] ?' military_tech' :'error'}}</span>
+ <span class="material-symbols-outlined text-5xl">@if(!$hasAttempts)quiz @elseif($lastResult['passed'])military_tech @else error @endif</span>
  </div>
 
- <h2 class="text-3xl font-black mb-2">{{ $lastResult['passed'] ?'¡Felicidades, Aprobaste!' :'No has aprobado'}}</h2>
+ @if(!$hasAttempts)
+ <h2 class="text-3xl font-black mb-2">{{ $currentAssessment->title }}</h2>
+ <p class="text-slate-500 mb-8">Responde la evaluación para completar el curso. ¡Buena suerte!</p>
+
+ <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+ <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+ <p class="text-[10px] font-black uppercase text-slate-400 mb-1">Preguntas</p>
+ <p class="text-xl font-black text-slate-900">{{ $currentAssessment->questions->count() }}</p>
+ </div>
+ <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+ <p class="text-[10px] font-black uppercase text-slate-400 mb-1">Calificación mínima</p>
+ <p class="text-xl font-black text-slate-900">{{ number_format($currentAssessment->min_score, 0) }}%</p>
+ </div>
+ <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
+ <p class="text-[10px] font-black uppercase text-slate-400 mb-1">Intentos permitidos</p>
+ <p class="text-xl font-black text-slate-900">{{ $currentAssessment->attempts_allowed ?: 'Ilimitados' }}</p>
+ </div>
+ </div>
+ @else
+ <h2 class="text-3xl font-black mb-2">{{ $lastResult['passed'] ? '¡Felicidades, Aprobaste!' : 'No has aprobado' }}</h2>
  <p class="text-slate-500 mb-8">
- {{ $lastResult['passed'] ?' Has superado con éxito la evaluación de este curso.' :'Te invitamos a repasar los contenidos del curso e intentarlo de nuevo.'}}
+ {{ $lastResult['passed'] ? 'Has superado con éxito la evaluación de este curso.' : 'Te invitamos a repasar los contenidos del curso e intentarlo de nuevo.' }}
  </p>
 
  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
@@ -125,18 +148,19 @@
  </div>
  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
  <p class="text-[10px] font-black uppercase text-slate-400 mb-1">Intentos</p>
- <p class="text-xl font-black text-slate-900">{{ $lastResult['total_attempts'] }}{{ $lastResult['max_attempts'] ?'/'. $lastResult['max_attempts'] :''}}</p>
+ <p class="text-xl font-black text-slate-900">{{ $lastResult['total_attempts'] }}{{ $lastResult['max_attempts'] ? '/' . $lastResult['max_attempts'] : '' }}</p>
  </div>
  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
  <p class="text-[10px] font-black uppercase text-slate-400 mb-1">Resultado</p>
- <p @class(['text-sm font-black uppercase','text-emerald-500'=> $lastResult['passed'],'text-red-500'=> !$lastResult['passed']])>{{ $lastResult['passed'] ?'Aprobado' :'Reprobado'}}</p>
+ <p @class(['text-sm font-black uppercase', 'text-emerald-500' => $lastResult['passed'], 'text-red-500' => !$lastResult['passed']])>{{ $lastResult['passed'] ? 'Aprobado' : 'Reprobado' }}</p>
  </div>
  </div>
+ @endif
 
  <div class="flex flex-col sm:flex-row gap-4 justify-center">
  @if($lastResult['can_attempt'])
  <button wire:click="startAssessment" class="px-8 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20">
- Reintentar Examen
+ {{ $hasAttempts ? 'Reintentar Examen' : 'Comenzar Evaluación' }}
  </button>
  @endif
 
